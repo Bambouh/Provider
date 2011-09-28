@@ -1,1 +1,6 @@
-+.metadata
+.metadata/
+.settings/
+.bin/
+*.zip
+.classpath
+.project
