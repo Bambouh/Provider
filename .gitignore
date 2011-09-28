@@ -1,6 +1,7 @@
 .metadata/
 .settings/
-.bin/
 *.zip
 .classpath
 .project
+bin/
+*.class
