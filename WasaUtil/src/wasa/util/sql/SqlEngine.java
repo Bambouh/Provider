@@ -1,46 +1,53 @@
-package provider.model.sql;
+package wasa.util.sql;
 
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import provider.uti.DeepCopy;
-import provider.uti.FileHelper;
-import provider.uti.IFileHelper;
+import wasa.util.date.DateFormat;
+import wasa.util.date.IDateFormat;
+import wasa.util.file.DeepCopy;
+import wasa.util.file.FileHelper;
+import wasa.util.file.IFileHelper;
+import wasa.util.file.ILineFilter;
 
 public class SqlEngine implements ISqlEngine {
 	
+	private static final String DATE_FORMAT_SQL = "YYYYMMDDHH24MISS";
+	
+	private static IDateFormat dateFormat = DateFormat.FORMAT_2;
+	
 	private Map<String, IQuery> queriesMap = new HashMap<String, IQuery>();
+	private String sqlDirectoryPath;
 	
 	public SqlEngine(SqlEngine sqlEngine) {
-		queriesMap = DeepCopy.copy(sqlEngine.getQueriesMap());
+		queriesMap = DeepCopy.INSTANCE.copy(sqlEngine.getQueriesMap());
 		queriesMap = Collections.unmodifiableMap(queriesMap);
+		sqlDirectoryPath = sqlEngine.getSqlDirectoryPath();
 	}
 	
-	public SqlEngine() {
+	public SqlEngine(File sqlDirectory) {
 		//Init engine
-		URL url = this.getClass().getResource("Object.class");
-		File baseDir = new File(url.getPath());
-		if(!baseDir.isDirectory()) {
+		if(!sqlDirectory.isDirectory()) {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "THe provided path where there shoud " +
-					"be the SQL files is wrong : " + baseDir);
+					"be the SQL files is wrong : " + sqlDirectory);
 			return;
 		}
+		sqlDirectoryPath = sqlDirectory.getAbsolutePath();
 		
 		//Retrieving files
 		List<File> files = new ArrayList<File>();
-		for(File file : baseDir.listFiles()) {
-			String[] nameArr = file.getName().split(".");
+		for(File file : sqlDirectory.listFiles()) {
+			String fileName = file.getName();
+			String[] nameArr = fileName.split("\\.");
 			if(file.isFile() && nameArr[nameArr.length-1].equals(SQL_FILE_SUFFIX)) {
-				files.add(file);			
+				files.add(file);
 			}
 		}
 		if(files.size() == 0) {
@@ -48,21 +55,29 @@ public class SqlEngine implements ISqlEngine {
 			return;
 		}
 		
-		//Retrieving lines from files
+		//Creates a filter for comments line
+		ILineFilter commentFilter = new ILineFilter() {
+			@Override
+			public String filter(String line) {
+				if(line.startsWith(COMMENT_LINE_START))
+					return null;
+				return line;
+			}
+		};
+		
+		//Retrieving lines from files (comment lines are ignored)
 		List<String> lines = new ArrayList<String>();
 		IFileHelper fileHelper = FileHelper.INSTANCE;
 		for(File file : files) {
-			lines.addAll(fileHelper.getLines(file));
+			lines.addAll(fileHelper.getLines(file, commentFilter));
 		}
 		
 		//Retrieving IQueries from lines and feed the queriesMap
-		Pattern nameLinePattern = Pattern.compile("^" + NAME_LINE_START);
 		StringBuilder queryStr = new StringBuilder();
 		String queryName = null;
 		lines.add(NAME_LINE_START); //last query is forgotten, so we add a last useless one at the end, so it does not matter  :)
 		for(String line : lines) {
-			Matcher nameLineMatcher = nameLinePattern.matcher(line);
-			if(nameLineMatcher.find()) { //its a query name line, store previous query if exists and prepare new one
+			if(line.contains(NAME_LINE_START)) { //its a query name line, store previous query if exists and prepare new one
 				if(queryStr.length() > 0) {
 					IQuery query = null;
 					query = new Query(queryName, queryStr.toString());
@@ -76,8 +91,8 @@ public class SqlEngine implements ISqlEngine {
 					}
 					queriesMap.put(query.getName(), query);
 				}
+				queryName = line.replace(NAME_LINE_START, "");
 				queryStr = new StringBuilder();
-				queryName = line.replace("^" + NAME_LINE_START, "");
 				
 			} else { 
 				queryStr.append(line);
@@ -89,8 +104,9 @@ public class SqlEngine implements ISqlEngine {
 	}
 	
 	@Override
-	public String getQuery(String queryName, String... parameters) {
+	public String getQuery(String name, Object... parameters) {
 		//Init and checks
+		String queryName = name.trim().toUpperCase();
 		if(!queriesMap.containsKey(queryName)) {
 			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "The query " +
 					queryName + " does not exist");
@@ -113,7 +129,7 @@ public class SqlEngine implements ISqlEngine {
 						queryName + " does not contains the argument : " + argName);
 				return null;
 			}
-			queryStr = queryStr.replace(argName, parameters[i]);
+			queryStr = queryStr.replace(argName, asString(parameters[i]));
 		}
 		return queryStr;
 	}
@@ -121,5 +137,40 @@ public class SqlEngine implements ISqlEngine {
 	private Map<String, IQuery> getQueriesMap() {
 		return queriesMap;
 	}
+
+	@Override
+	public String getSqlDirectoryPath() {
+		return sqlDirectoryPath;
+	}
 	
+	private static String asString(Object obj) {
+		if(obj instanceof Object[]) {
+			StringBuilder strB = new StringBuilder();
+			for(Object subObj : (Object[])obj) {
+				strB.append(asString(subObj));
+				strB.append(",");
+			}
+			return strB.substring(0, strB.length()-1);
+		
+		} else if(obj instanceof Date) {
+			return "TO_DATE('"+dateFormat.getString((Date)obj)+"', '"
+					+DATE_FORMAT_SQL+"')";
+		
+		} else if(obj instanceof String) {
+			return "'"+(String)obj+"'";
+		
+		} else if(obj instanceof Integer) {
+			return String.valueOf((Integer)obj);
+		
+		} else if(obj instanceof Double) {
+			return String.valueOf((Double)obj);
+		
+		} else if(obj instanceof Long) {
+			return String.valueOf((Long)obj);
+		
+		} else if(obj instanceof Float) {
+			return String.valueOf((Float)obj);
+		}
+		return null;
+	}
 }

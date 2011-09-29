@@ -1,4 +1,4 @@
-package wasa.util;
+package wasa.util.date;
 
 import java.util.Date;
 import java.util.HashMap;

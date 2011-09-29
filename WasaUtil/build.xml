@@ -1,0 +1,77 @@
+<project name="WasaUtil" basedir=".">
+
+	<!-- 
+	PROPERTIES
+	 -->
+	<property name="version" value="0.1" />
+	<property name="src.dir" value="src" />
+	<property name="build.dir" value="bin" />
+	<property name="jar.dir" value="../libraries" />
+	<property name="lib.dir" value="../libraries" />
+	
+	<!-- 
+	CLASSPATH
+	 -->
+	<path id="classpath">
+        <fileset dir="${lib.dir}" includes="**/*.jar"/>
+    </path>
+	
+	<!-- 
+	CLEAN 
+	-->
+    <target name="clean">
+    	<echo>CLEANING</echo>
+    	<delete dir="${build.dir}"/>
+    </target>
+
+	<!-- 
+	COMPILE 
+	-->
+    <target name="compile" depends="clean">
+    	<echo>COMPILING BASE</echo>
+    	<mkdir dir="${build.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" includeantruntime="false"/>
+    </target>
+	
+	<!-- 
+	JAR 
+	-->
+    <target name="jar" depends="compile">
+    	<echo>JAR BASE</echo>
+        <mkdir dir="${jar.dir}"/>
+        <jar destfile="${jar.dir}/${ant.project.name}-${version}.jar" basedir="${build.dir}"/>
+    </target>
+	
+	<!-- 
+	TEST 
+	-->
+	<target name="test" depends="compile">
+		<echo>TEST</echo>
+		<junit>
+			<classpath refid="classpath" />
+			<formatter type="plain" usefile="false" />
+			<test name="test.AllTests" />
+		</junit>
+	</target>
+	
+	
+	<!--
+	<target name="jar">
+        <mkdir dir="../libraries"/>
+        <jar destfile="../libraries/WasaUtil.jar" basedir="bin"/>
+            <manifest>
+                <attribute name="Main-Class" value="oata.HelloWorld"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="run" depends="jar">
+        <java fork="true" classname="${main-class}">
+            <classpath>
+                <path refid="classpath"/>
+                <path location="${jar.dir}/${ant.project.name}.jar"/>
+            </classpath>
+        </java>
+    </target>
+	-->
+</project>

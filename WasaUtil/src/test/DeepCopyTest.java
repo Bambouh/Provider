@@ -1,4 +1,4 @@
-package wasa.util;
+package test;
 
 import static org.junit.Assert.*;
 
@@ -10,6 +10,8 @@ import java.util.TreeSet;
 
 import org.junit.Test;
 import org.omg.PortableInterceptor.SUCCESSFUL;
+
+import wasa.util.file.DeepCopy;
 
 import junit.framework.TestCase;
 
@@ -27,7 +29,7 @@ public class DeepCopyTest extends TestCase {
 		sourceMap.put("Paris", 11);
 		sourceMap.put("abstract", 111);
 		
-		Map<String, Integer> destMap = DeepCopy.copy(sourceMap);
+		Map<String, Integer> destMap = DeepCopy.INSTANCE.copy(sourceMap);
 		
 		assertTrue("source and dest maps don't have same size", 
 				sourceMap.size() == destMap.size());
@@ -62,7 +64,7 @@ public class DeepCopyTest extends TestCase {
 		sourceSet.add(6);
 		sourceSet.add(7);
 		
-		SortedSet<Integer> destSet = DeepCopy.copy(sourceSet);
+		SortedSet<Integer> destSet = DeepCopy.INSTANCE.copy(sourceSet);
 		
 		assertTrue("source and dest maps don't have same size", 
 				sourceSet.size() == destSet.size());

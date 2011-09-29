@@ -1,0 +1,10 @@
+#Je nécrit un commentaire
+Je mange une pomme
+j'écrit un test pour vérifier que 
+
+
+
+le fonctionnement de fileHelper est bien correct
+#une ligne qui sera filtrée dans une cas d'un filtre qui enlève
+###les lignes commençant par "#"
+:D

@@ -1,4 +1,4 @@
-package provider.model.sql;
+package wasa.util.sql;
 
 public interface IQuery {
 

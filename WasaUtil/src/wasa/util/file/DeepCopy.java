@@ -1,4 +1,4 @@
-package wasa.util;
+package wasa.util.file;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -7,9 +7,11 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 @SuppressWarnings("unchecked")
-public class DeepCopy {
+public enum DeepCopy {
 
-	public static <K,V> Map<K, V> copy(Map<K, V> map) {
+	INSTANCE;
+	
+	public <K,V> Map<K, V> copy(Map<K, V> map) {
 		K[] keys = (K[])new Object[map.size()];
 		System.arraycopy(map.keySet().toArray(), 0, keys, 0, map.size());
 		V[] values = (V[])new Object[map.size()];
@@ -22,7 +24,7 @@ public class DeepCopy {
         return deepCopy;
 	}
 	
-	public static <K> SortedSet<K> copy(SortedSet<K> set) {
+	public <K> SortedSet<K> copy(SortedSet<K> set) {
 		K[] destArr = (K[])new Object[set.size()];
 		System.arraycopy(set.toArray((K[])new Object[set.size()]), 0, destArr, 0, set.size());
 		

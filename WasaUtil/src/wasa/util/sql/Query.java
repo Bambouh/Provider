@@ -1,4 +1,4 @@
-package provider.model.sql;
+package wasa.util.sql;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,14 +13,14 @@ public class Query implements IQuery {
 	int nbArgs;
 	
 	public Query(String name, String query, int nbArgs) {
-		this.name = name;
-		this.query = query;
+		this.name = name.trim().toUpperCase();
+		this.query = query.trim().toUpperCase();
 		this.nbArgs = nbArgs;
 	}
 	
 	public Query(String name, String query) {
-		this.name = name;
-		this.query = query;
+		this.name = name.trim().toUpperCase();
+		this.query = query.trim().toUpperCase();
 		this.nbArgs = getNbArgs(query);
 		if(this.nbArgs == -1) { //the query is wrong
 			Logger.getAnonymousLogger().log(Level.SEVERE, "Wrong query : " + name);
@@ -45,11 +45,11 @@ public class Query implements IQuery {
 	}
 
 	void setName(String name) {
-		this.name = name;
+		this.name = name.trim().toUpperCase();
 	}
 
 	void setQuery(String query) {
-		this.query = query;
+		this.query = query.trim().toUpperCase();
 	}
 
 	void setNbArgs(int nbArgs) {
@@ -68,13 +68,13 @@ public class Query implements IQuery {
 		Matcher argMatcher = argPattern.matcher(query);
 		int argCount = 0;
 		while(argMatcher.find()) {
-			argCount++;
 			String expectedName = ISqlEngine.QUERY_ARGUMENT_START+argCount;
 			if(!argMatcher.group().equals(expectedName)) {
 				Logger.getAnonymousLogger().log(Level.SEVERE, "Wrong argument " + 
 						"in the query : " + query);
 				return -1;
 			}
+			argCount++;
 		}
 		return argCount;
 	}

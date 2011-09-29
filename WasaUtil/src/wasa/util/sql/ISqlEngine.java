@@ -1,10 +1,10 @@
-package provider.model.sql;
+package wasa.util.sql;
 
 /**
  * Entry point to get the sql query stored in .SQL files
  * To access a query, you need to provide query name.
  * SQL files are automatically retrieved: all the .sql in 
- * the engine package will be processed
+ * the given package will be processed
  * All names have to be unique through all the sql files.
  * 
  * A query looks like that:
@@ -16,16 +16,19 @@ package provider.model.sql;
  */
 public interface ISqlEngine {
 
-	static final String NAME_LINE_START = "#";
+	static final String NAME_LINE_START = "@Name=";
+	static final String COMMENT_LINE_START = "#";
 	static final String QUERY_ARGUMENT_START = ":";
 	static final String SQL_FILE_SUFFIX = "sql";
 	
 	/**
-	 * Retrieve and process a query from specified parameters. 
+	 * Retrieve and process a query from specified parameters. WARNING: don't use primitives
 	 * @param queryName Name of the query
 	 * @param parameters it has to match the number of parameters in the query
 	 * @return the retrieved and processed query. Null if not found
 	 */
-	String getQuery(String queryName, String... parameters);
+	String getQuery(String queryName, Object... parameters);
+
+	String getSqlDirectoryPath();
 	
 }

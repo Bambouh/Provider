@@ -1,4 +1,4 @@
-package wasa.util;
+package test;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -15,11 +15,13 @@ import java.util.logging.Logger;
 
 import org.junit.Test;
 
+import wasa.util.date.UniqueDateFactory;
+
 import junit.framework.TestCase;
 
 public class UniqueDateFactoryTest extends TestCase {
 	
-	private static final int NB_THREADS = 100;
+	private static final int NB_THREADS = 30;
 	
 	/**
 	 * Each threads gets the same big list of dates, its own instance

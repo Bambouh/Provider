@@ -1,4 +1,4 @@
-package wasa.util;
+package wasa.util.file;
 
 
 import java.io.BufferedInputStream;
@@ -18,7 +18,7 @@ public enum FileHelper implements IFileHelper {
 	INSTANCE;
 	
 	@Override
-	public List<String> getLines(File file) {
+	public List<String> getLines(File file, ILineFilter... filters) {
 		FileInputStream fis = null;
 		BufferedInputStream bis = null;
 		BufferedReader dis = null;
@@ -30,15 +30,22 @@ public enum FileHelper implements IFileHelper {
 
 			String line = null;
 			while ((line = dis.readLine()) != null) {
-				if(line != null)
+				if(filters != null) {
+					for(ILineFilter filter : filters) {
+						if(line == null)	break;
+						line = filter.filter(line);
+					}
+				}
+				if(line != null) {
 					lines.add(line);
+				}
 			}
 			fis.close();
 			bis.close();
 			dis.close();
 		} catch (Exception e) {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, 
-					"SEVERE : could not parse following file : " + file.getAbsolutePath(), e);
+					"could not parse following file : " + file.getAbsolutePath(), e);
 			return null;
 		}
 		return lines;
@@ -76,7 +83,7 @@ public enum FileHelper implements IFileHelper {
 			return false; // Erreur
 		}
 	
-		return true; // Résultat OK  
+		return true; // Resultat OK  
 	}
 
 }
