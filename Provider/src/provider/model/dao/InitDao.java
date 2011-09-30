@@ -1,6 +1,6 @@
 package provider.model.dao;
 
-public abstract class Dao {
+public interface InitDao {
 
 	
 }
