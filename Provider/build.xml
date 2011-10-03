@@ -1,7 +1,7 @@
 <project name="Provider" basedir=".">
 
 	<!-- 
-	PROPERTIES
+	PROPERTIES 
 	 -->
 	<property name="version" value="0.1" />
 	<property name="src.dir" value="src" />
@@ -9,8 +9,10 @@
 	<property name="jar.dir" value="../libraries" />
 	<property name="lib.dir" value="../libraries" />
 	
+	<property name="wasa.util.ant" value="../WasaUtil/build.xml" />
+	
 	<!-- 
-	CLASSPATH
+	CLASSPATH 
 	 -->
 	<path id="classpath">
         <fileset dir="${lib.dir}" includes="**/*.jar"/>
@@ -20,24 +22,35 @@
 	CLEAN 
 	-->
     <target name="clean">
-    	<echo>CLEANING</echo>
+    	<echo>CLEANING PROVIDER</echo>
     	<delete dir="${build.dir}"/>
+    	<delete file="${jar.dir}/${ant.project.name}-${version}.jar"/>
     </target>
 
 	<!-- 
 	COMPILE 
 	-->
     <target name="compile" depends="clean">
-    	<echo>COMPILING BASE</echo>
+    	<echo>COMPILING PROVIDER</echo>
     	<mkdir dir="${build.dir}"/>
         <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" includeantruntime="false"/>
     </target>
 	
+	<!--
+	RESOURCES COPY
+	-->
+	<target name="resources_copy">
+		<echo>COPYING RESOURCES PROVIDER</echo>
+		<copy todir="${build.dir}">
+		    <fileset dir="${src.dir}" excludes="*/.java" />
+		</copy>
+	</target>
+	
 	<!-- 
 	JAR 
 	-->
-    <target name="jar" depends="compile">
-    	<echo>JAR BASE</echo>
+    <target name="jar" depends="compile, resources_copy">
+    	<echo>JAR PROVIDER</echo>
         <mkdir dir="${jar.dir}"/>
         <jar destfile="${jar.dir}/${ant.project.name}-${version}.jar" basedir="${build.dir}"/>
     </target>
@@ -45,33 +58,16 @@
 	<!-- 
 	TEST 
 	-->
-	<target name="test" depends="compile">
-		<echo>TEST</echo>
+	<target name="test" depends="compile, resources_copy">
+		<echo>TEST PROVIDER</echo>
 		<junit>
-			<classpath refid="classpath" />
+			<classpath>
+				<path refid="classpath" />
+				<path location="${build.dir}"/>
+			</classpath>
 			<formatter type="plain" usefile="false" />
-			<test name="test.AllTests" />
+			<test name="provider.test.AllTests" />
 		</junit>
 	</target>
 	
-	
-	<!--
-	<target name="jar">
-        <mkdir dir="../libraries"/>
-        <jar destfile="../libraries/WasaUtil.jar" basedir="bin"/>
-            <manifest>
-                <attribute name="Main-Class" value="oata.HelloWorld"/>
-            </manifest>
-        </jar>
-    </target>
-
-    <target name="run" depends="jar">
-        <java fork="true" classname="${main-class}">
-            <classpath>
-                <path refid="classpath"/>
-                <path location="${jar.dir}/${ant.project.name}.jar"/>
-            </classpath>
-        </java>
-    </target>
-	-->
 </project>
