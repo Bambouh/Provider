@@ -2,7 +2,6 @@ package provider.model.pojo;
 
 import java.util.Date;
 
-import provider.ETradeMovementType;
 
 /**
  * Represent a movement related to a trade. It's an event, can be trade opening,

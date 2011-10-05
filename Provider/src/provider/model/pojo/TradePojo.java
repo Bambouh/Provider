@@ -8,12 +8,12 @@ public class TradePojo implements Comparable<TradePojo> {
 	Date startDate, endDate;
 	float 	bestPips, bestDollarLot, 
 			worstPips, worstDollarLot,
-			netPips, NetDollarLot;
+			netPips, netDollarLot;
 	
 	public TradePojo(int id, int currencyId, int providerId, Date startDate,
 			Date endDate, float bestPips, float bestDollarLot, float worstPips,
 			float worstDollarLot, float netPips, float netDollarLot) {
-		super();
+		
 		this.id = id;
 		this.currencyId = currencyId;
 		this.providerId = providerId;
@@ -24,7 +24,15 @@ public class TradePojo implements Comparable<TradePojo> {
 		this.worstPips = worstPips;
 		this.worstDollarLot = worstDollarLot;
 		this.netPips = netPips;
-		NetDollarLot = netDollarLot;
+		this.netDollarLot = netDollarLot;
+	}
+	
+	public TradePojo(TradePojo tradePojo) {
+		this(tradePojo.id, tradePojo.currencyId, tradePojo.providerId, 
+				tradePojo.startDate, tradePojo.endDate, tradePojo.bestPips, 
+				tradePojo.bestDollarLot, tradePojo.worstPips, 
+				tradePojo.worstDollarLot, tradePojo.netPips, 
+				tradePojo.netDollarLot);
 	}
 
 	public int getId() {
@@ -68,7 +76,7 @@ public class TradePojo implements Comparable<TradePojo> {
 	}
 
 	public float getNetDollarLot() {
-		return NetDollarLot;
+		return netDollarLot;
 	}
 
 	@Override

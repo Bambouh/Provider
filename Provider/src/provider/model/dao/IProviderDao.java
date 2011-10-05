@@ -1,16 +1,24 @@
 package provider.model.dao;
 
-import java.util.SortedMap;
-import java.util.SortedSet;
+import java.util.List;
+import java.util.Map;
 
-import provider.model.pojo.TradePojo;
+import provider.model.pojo.ProviderPojo;
 
 public interface IProviderDao {
 
-	TradePojo getTrade(int id);
+	ProviderPojo getProvider(int providerId);
 	
-	SortedSet<TradePojo> getTrades();
+	ProviderPojo getProvider(String providerName);
 	
-	SortedMap<Object, Object> getTradeFieldPair();
+	List<String> getProviderNames();
+	
+	Map<Integer, String> getProviderNamesPerId();
+	
+	List<ProviderPojo> getProviders();
+	
+	boolean createProvider(ProviderPojo provider);
+	
+	boolean updateProvider(int providerId, ProviderPojo provider);
 	
 }

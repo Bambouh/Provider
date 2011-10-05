@@ -1,30 +1,60 @@
 package provider.model.dao;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import provider.manager.IProviderManager;
+import provider.model.dao.resultset.IProviderResultsetHelper;
+import provider.model.dao.resultset.IResultsetHelper;
+import provider.model.dao.resultset.ProviderResultsetHelper;
+import provider.model.dao.resultset.ResultsetHelper;
 import wasa.util.sql.ISqlEngine;
 
 public abstract class Dao {
 
 	private ISqlEngine sqlEngine;
 	private Connection connection;
+	private IResultsetHelper resultsetHelper;
+	private IProviderResultsetHelper providerResultsetHelper;
 	
-	public Dao(IProviderManager providerManager) {
+	protected Dao(IProviderManager providerManager) {
 		sqlEngine = providerManager.getSqlEngine();
 		connection = providerManager.getConnection();
+		resultsetHelper = ResultsetHelper.INSTANCE;
+		providerResultsetHelper = ProviderResultsetHelper.INSTANCE;
 	}
 	
-	public ISqlEngine getSqlEngine() {
+	protected ISqlEngine getSqlEngine() {
 		return sqlEngine;
 	}
 	
-	public Connection getConnection() {
+	protected Connection getConnection() {
 		return connection;
 	}
 	
-	public String getQuery(String queryName, Object...parameters) {
+	protected String getQuery(String queryName, Object...parameters) {
 		return sqlEngine.getQuery(queryName, parameters);
 	}
 	
+	protected IResultsetHelper getResultsetHelper() {
+		return resultsetHelper;
+	}
+	
+	protected IProviderResultsetHelper getProviderResultsetHelper() {
+		return providerResultsetHelper;
+	}
+	
+	protected boolean close(Statement statement) {
+		try {
+			statement.close();
+		} catch (SQLException e) {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, 
+					"Error occured while closing a statement", e);
+			return false;
+		}
+		return true;
+	}
 }

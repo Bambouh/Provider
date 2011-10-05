@@ -2,7 +2,7 @@ package provider.model.pojo;
 
 public class CurrencyPojo {
 
-	private static final String CURRENCY_SEPARATOR = "/";
+	public static final String CURRENCY_SEPARATOR = "/";
 	
 	int id;
 	String cur1, cur2;
@@ -24,6 +24,10 @@ public class CurrencyPojo {
 	
 	public int getId() {
 		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getCur1() {

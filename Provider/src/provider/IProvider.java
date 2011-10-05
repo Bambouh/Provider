@@ -7,6 +7,7 @@ import provider.entity.IBroker;
 import provider.entity.ITrade;
 import provider.entity.ITradeMovement;
 import provider.model.dao.IProviderDao;
+import provider.model.pojo.EProviderType;
 
 /**
  * Main interface of the library.

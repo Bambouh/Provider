@@ -1,4 +1,4 @@
-package provider;
+package provider.model.pojo;
 
 /**
  * Type of the trade movement

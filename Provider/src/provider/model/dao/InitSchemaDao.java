@@ -14,7 +14,6 @@ public class InitSchemaDao extends Dao implements IInitSchemaDao {
 		super(providerManager);
 	}
 
-	//TODO: TEST THIS METHOD
 	@Override
 	public boolean initSchema() {
 		Statement statement = null;
@@ -29,23 +28,10 @@ public class InitSchemaDao extends Dao implements IInitSchemaDao {
 					.log(Level.SEVERE, "Unable to create database statement");
 		}
 		
-		//Checking table existance
-		String createTradeTable = getQuery("provider.init.create_table_trade");
+		//Database schema initialization, fails if already created
 		try {
-			statement.executeUpdate(createTradeTable);
-		} catch (SQLException e) {
-			//TODO: verifier type erreur, dire init OK que si table existe déjà
-			Logger.getLogger(this.getClass().getName()).log(Level.INFO,
-					"Database already set, skipping initialisation");
-			return true;
-		}
-		
-		//Starting database schema initialisation
-		try {
-			getConnection().rollback();
-			
 			//Tables creation
-			statement.addBatch(getQuery("provider.init.create_table_trade"));
+			statement.addBatch(getQuery("provider.init.create_table_provider"));
 			statement.addBatch(getQuery("provider.init.create_table_broker"));
 			statement.addBatch(getQuery("provider.init.create_table_meta_provider_link"));
 			statement.addBatch(getQuery("provider.init.create_table_currency"));
@@ -53,19 +39,24 @@ public class InitSchemaDao extends Dao implements IInitSchemaDao {
 			statement.addBatch(getQuery("provider.init.create_table_trade_ext"));
 			statement.addBatch(getQuery("provider.init.create_table_trade_movement"));
 			statement.addBatch(getQuery("provider.init.create_table_movement_type"));
+			statement.addBatch(getQuery("provider.init.create_table_dual"));
 			statement.executeBatch();
 			getConnection().commit();
 			
 		} catch (SQLException e) {
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE,
-					"Database initialisation failed", e);
-			return false;
+			//Checking if crash is due to database already initialized
+			try {
+				statement.executeQuery(getQuery("provider.init.check_existance"));
+
+			} catch (SQLException e1) {
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE,
+						"Database initialisation failed", e);
+				return false;
+			}
+		
+		} finally {
+			close(statement);
 		}
-		
-		
-		
-		
-		
 		return true;
 	}
 	

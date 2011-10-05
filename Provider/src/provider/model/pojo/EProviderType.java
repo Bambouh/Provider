@@ -1,4 +1,4 @@
-package provider;
+package provider.model.pojo;
 
 /**
  * The type of provider

@@ -14,7 +14,7 @@ public class InitSchemaDaoTest extends TestCase {
 	public void testInitSchema() {
 		IProviderManager providerManager = new ProviderManagerForTestPurpose();
 		IInitSchemaDao initSchemaDao = new InitSchemaDao(providerManager);
-		initSchemaDao.initSchema();
-		
+		assertTrue("Initializing empty database failed", initSchemaDao.initSchema());
+		assertTrue("Initializing already initialized database failed", initSchemaDao.initSchema());
 	}
 }

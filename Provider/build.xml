@@ -5,11 +5,10 @@
 	 -->
 	<property name="version" value="0.1" />
 	<property name="src.dir" value="src" />
-	<property name="build.dir" value="bin" />
+	<property name="build.dir" value="build" />
 	<property name="jar.dir" value="../libraries" />
 	<property name="lib.dir" value="../libraries" />
-	
-	<property name="wasa.util.ant" value="../WasaUtil/build.xml" />
+	<property name="debug.level" value="lines,vars,source" />
 	
 	<!-- 
 	CLASSPATH 
@@ -33,7 +32,7 @@
     <target name="compile" depends="clean">
     	<echo>COMPILING PROVIDER</echo>
     	<mkdir dir="${build.dir}"/>
-        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" includeantruntime="false"/>
+        <javac srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" includeantruntime="false" debuglevel="#{debug.level}" />
     </target>
 	
 	<!--
@@ -58,7 +57,7 @@
 	<!-- 
 	TEST 
 	-->
-	<target name="test" depends="compile, resources_copy">
+	<target name="test" depends="jar">
 		<echo>TEST PROVIDER</echo>
 		<junit>
 			<classpath>

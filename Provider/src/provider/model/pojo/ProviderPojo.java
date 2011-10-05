@@ -2,7 +2,6 @@ package provider.model.pojo;
 
 import java.util.Date;
 
-import provider.EProviderType;
 
 public class ProviderPojo {
 
