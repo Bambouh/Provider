@@ -23,6 +23,6 @@ public interface IBrokerDao {
 	 * @param broker
 	 * @return
 	 */
-	boolean saveBroker(BrokerPojo broker);
+	boolean save(BrokerPojo broker);
 	
 }

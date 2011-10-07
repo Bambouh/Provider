@@ -1,5 +1,6 @@
 package provider.model.dao;
 
+import java.util.Date;
 import java.util.List;
 import java.util.SortedSet;
 
@@ -8,16 +9,20 @@ import provider.model.pojo.TradeExtPojo;
 
 public interface ITradeExtDao {
 
-	TradeExtPojo getTrade(int tradeId);
+	TradeExtPojo getTradeExt(int tradeId);
 	
-	SortedSet<TradeExtPojo> getTrades(int providerId);
+	Integer getTradeId(Date startDate);
 	
-	SortedSet<TradeExtPojo> getTrades(ProviderPojo provider);
+	SortedSet<TradeExtPojo> getTradesExt(ProviderPojo provider);
 	
-	boolean create(TradeExtPojo tradeExt);
+	SortedSet<TradeExtPojo> getTradesExt(int providerId);
 	
-	boolean create(List<TradeExtPojo> tradesExt);
+	boolean save(TradeExtPojo tradeExt);
 	
-	boolean update(int tradeId, TradeExtPojo tradeExt);
+	boolean save(List<TradeExtPojo> tradesExt);
+	
+	boolean deleteByProvider(int providerId);
+	
+	boolean deleteByProvider(ProviderPojo provider);
 	
 }

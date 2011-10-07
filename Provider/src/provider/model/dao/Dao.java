@@ -35,8 +35,12 @@ public abstract class Dao {
 		return connection;
 	}
 	
-	protected String getQuery(String queryName, Object...parameters) {
-		return sqlEngine.getQuery(queryName, parameters);
+	protected String getFilledQuery(String queryName, Object...parameters) {
+		return sqlEngine.getFilledQuery(queryName, parameters);
+	}
+	
+	protected String getQuery(String queryName) {
+		return sqlEngine.getQuery(queryName);
 	}
 	
 	protected IResultsetHelper getResultsetHelper() {
@@ -50,9 +54,22 @@ public abstract class Dao {
 	protected boolean close(Statement statement) {
 		try {
 			statement.close();
+			
 		} catch (SQLException e) {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, 
 					"Error occured while closing a statement", e);
+			return false;
+		}
+		return true;
+	}
+	
+	protected boolean rollback() {
+		try {
+			getConnection().rollback();
+			
+		} catch (SQLException e) {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, 
+					"Error occured during connection rollback", e);
 			return false;
 		}
 		return true;

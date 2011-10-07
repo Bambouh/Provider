@@ -3,6 +3,7 @@ package provider.model.dao.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -30,7 +31,7 @@ public class CurrencyDao extends Dao implements ICurrencyDao {
 
 	@Override
 	public CurrencyPojo getCurrency(int currencyId) {
-		String query = getQuery("provider.currency.select_one", currencyId);
+		String query = getFilledQuery("provider.currency.select_one", currencyId);
 		ResultSet res = null;
 		try {
 			res = statement.executeQuery(query);
@@ -43,7 +44,7 @@ public class CurrencyDao extends Dao implements ICurrencyDao {
 	
 	@Override
 	public Integer getCurrencyId(String cur1, String cur2) {
-		String query = getQuery("provider.currency.select_id_by_cur", cur1, cur2);
+		String query = getFilledQuery("provider.currency.select_id_by_cur", cur1, cur2);
 		ResultSet res = null;
 		try {
 			res = statement.executeQuery(query);
@@ -55,14 +56,8 @@ public class CurrencyDao extends Dao implements ICurrencyDao {
 	}
 
 	@Override
-	public List<Integer> getCurrencieIds() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public Map<String, Integer> getCurrencyIdPerName() {
-		String query = getQuery("provider.currency.select_all_id_per_pair", CurrencyPojo.CURRENCY_SEPARATOR);
+	public Map<String, Integer> getCurrencyIdPerPair() {
+		String query = getFilledQuery("provider.currency.select_all_id_per_pair", CurrencyPojo.CURRENCY_SEPARATOR);
 		ResultSet res = null;
 		try {
 			res = statement.executeQuery(query);
@@ -74,33 +69,76 @@ public class CurrencyDao extends Dao implements ICurrencyDao {
 	}
 	
 	@Override
+	public Map<Integer, String> getCurrencyPairPerId() {
+		String query = getFilledQuery("provider.currency.select_all_pair_per_id", CurrencyPojo.CURRENCY_SEPARATOR);
+		ResultSet res = null;
+		try {
+			res = statement.executeQuery(query);
+		} catch (SQLException e) {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, 
+					"Error occured while retrieving currencies pair per ID", e);
+		}
+		return getResultsetHelper().extractMap(res, new Integer(0), new String());
+	}
+	
+	@Override
 	public List<String> getCurrencyPairs() {
-		// TODO Auto-generated method stub
-		return null;
+		String query = getQuery("provider.currency.select_all_pairs");
+		ResultSet res = null;
+		try {
+			res = statement.executeQuery(query);
+		} catch (SQLException e) {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, 
+					"Error occured while retrieving all currencies pair", e);
+		}
+		return getResultsetHelper().extractList(res, new String());
 	}
 
 	@Override
 	public List<CurrencyPojo> getCurrencies() {
-		// TODO Auto-generated method stub
-		return null;
+		String query = getQuery("provider.currency.select_all");
+		ResultSet res = null;
+		try {
+			res = statement.executeQuery(query);
+		} catch (SQLException e) {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, 
+					"Error occured while retrieving all currencies", e);
+		}
+		List<CurrencyPojo> currencies = new ArrayList<CurrencyPojo>();
+		CurrencyPojo currency = null;
+		while((currency = getProviderResultsetHelper().extractCurrency(res)) != null)
+			currencies.add(currency);
+		
+		return currencies;
 	}
 
 	@Override
-	public List<CurrencyPojo> getCurrencies(int providerId) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<CurrencyPojo> getCurrenciesPerProvider(ProviderPojo provider) {
+		return getCurrenciesPerProvider(provider.getId());
 	}
-
+	
 	@Override
-	public List<CurrencyPojo> getCurrencies(ProviderPojo provider) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<CurrencyPojo> getCurrenciesPerProvider(int providerId) {
+		String query = getFilledQuery("provider.currency.select_all_per_provider", providerId);
+		ResultSet res = null;
+		try {
+			res = statement.executeQuery(query);
+		} catch (SQLException e) {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, 
+					"Error occured while retrieving currencies of a provider" , e);
+		}
+		List<CurrencyPojo> currencies = new ArrayList<CurrencyPojo>();
+		CurrencyPojo currency = null;
+		while((currency = getProviderResultsetHelper().extractCurrency(res)) != null)
+			currencies.add(currency);
+		
+		return currencies;
 	}
 
 	@Override
 	public boolean saveCurrency(CurrencyPojo currency) {
 		currency.setId(-1);
-		String query = getQuery("provider.currency.upsert_one", 
+		String query = getFilledQuery("provider.currency.upsert_one", 
 				currency.getCur1(), currency.getCur2(),
 				currency.getCur1(), currency.getCur2());
 		int currencyId = -1;
@@ -139,7 +177,7 @@ public class CurrencyDao extends Dao implements ICurrencyDao {
 		}
 		//Inserting rows : addBatch
 		for(CurrencyPojo currency : currencies) {
-			String query = getQuery("provider.currency.upsert_one",
+			String query = getFilledQuery("provider.currency.upsert_one",
 					currency.getCur1(), currency.getCur2(),
 					currency.getCur1(), currency.getCur2());
 			try {
@@ -164,7 +202,7 @@ public class CurrencyDao extends Dao implements ICurrencyDao {
 		}
 		
 		//Retrieving currencies ID && updating currency POJOs with it
-		Map<String, Integer> idPerCurrency = getCurrencyIdPerName();
+		Map<String, Integer> idPerCurrency = getCurrencyIdPerPair();
 		//Saving IDs in newly created currencies POJOs
 		for(int i=0 ; i<currencies.size() ; i++) {
 			String pair = currencies.get(i).getPair();
@@ -181,7 +219,5 @@ public class CurrencyDao extends Dao implements ICurrencyDao {
 		}
 		return true;
 	}
-
-
 	
 }

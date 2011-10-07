@@ -2,8 +2,13 @@ package provider.model.dao.resultset;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -69,6 +74,54 @@ public enum ResultsetHelper implements IResultsetHelper {
 		}
 		
 		return map;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <K> List<K> extractList(ResultSet res, K val) {
+		List<K> list = new ArrayList<K>();
+		try {
+			while(res.next()) {
+				val = (K)res.getObject(1);
+				list.add(val);
+			}
+		} catch (SQLException e) {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, 
+					"error occured while building List using generics", e);
+		}
+		return list;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <K> SortedSet<K> extractSortedSet(ResultSet res, K val) {
+		SortedSet<K> set = new TreeSet<K>();
+		try {
+			while(res.next()) {
+				val = (K)res.getObject(1);
+				set.add(val);
+			}
+		} catch (SQLException e) {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, 
+					"error occured while building List using generics", e);
+		}
+		return set;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <K> SortedSet<K> extractSortedSet(ResultSet res, K val, Comparator<K> comparator) {
+		SortedSet<K> set = new TreeSet<K>(comparator);
+		try {
+			while(res.next()) {
+				val = (K)res.getObject(1);
+				set.add(val);
+			}
+		} catch (SQLException e) {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, 
+					"error occured while building List using generics", e);
+		}
+		return set;
 	}
 
 	

@@ -31,22 +31,22 @@ public class InitSchemaDao extends Dao implements IInitSchemaDao {
 		//Database schema initialization, fails if already created
 		try {
 			//Tables creation
-			statement.addBatch(getQuery("provider.init.create_table_provider"));
-			statement.addBatch(getQuery("provider.init.create_table_broker"));
-			statement.addBatch(getQuery("provider.init.create_table_meta_provider_link"));
-			statement.addBatch(getQuery("provider.init.create_table_currency"));
-			statement.addBatch(getQuery("provider.init.create_table_trade"));
-			statement.addBatch(getQuery("provider.init.create_table_trade_ext"));
-			statement.addBatch(getQuery("provider.init.create_table_trade_movement"));
-			statement.addBatch(getQuery("provider.init.create_table_movement_type"));
-			statement.addBatch(getQuery("provider.init.create_table_dual"));
+			statement.addBatch(getFilledQuery("provider.init.create_table_provider"));
+			statement.addBatch(getFilledQuery("provider.init.create_table_broker"));
+			statement.addBatch(getFilledQuery("provider.init.create_table_meta_provider_link"));
+			statement.addBatch(getFilledQuery("provider.init.create_table_currency"));
+			statement.addBatch(getFilledQuery("provider.init.create_table_trade"));
+			statement.addBatch(getFilledQuery("provider.init.create_table_trade_ext"));
+			statement.addBatch(getFilledQuery("provider.init.create_table_trade_movement"));
+			statement.addBatch(getFilledQuery("provider.init.create_table_movement_type"));
+			statement.addBatch(getFilledQuery("provider.init.create_table_dual"));
 			statement.executeBatch();
 			getConnection().commit();
 			
 		} catch (SQLException e) {
 			//Checking if crash is due to database already initialized
 			try {
-				statement.executeQuery(getQuery("provider.init.check_existance"));
+				statement.executeQuery(getFilledQuery("provider.init.check_existance"));
 
 			} catch (SQLException e1) {
 				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE,

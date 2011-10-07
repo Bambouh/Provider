@@ -30,7 +30,7 @@ public class BrokerDao extends Dao implements IBrokerDao {
 
 	@Override
 	public BrokerPojo getBroker(int providerId) {
-		String query = getQuery("provider.broker.select_one", providerId);
+		String query = getFilledQuery("provider.broker.select_one", providerId);
 		ResultSet res = null;
 		try {
 			res = statement.executeQuery(query);
@@ -43,13 +43,13 @@ public class BrokerDao extends Dao implements IBrokerDao {
 
 	@Override
 	public Integer getBrokerId(String name) {
-		String query = getQuery("provider.broker.select_id_by_name", name);
+		String query = getFilledQuery("provider.broker.select_id_by_name", name);
 		ResultSet res = null;
 		try {
 			res = statement.executeQuery(query);
 		} catch (SQLException e) {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, 
-					"Error occured while retrieving broker", e);
+					"Error occured while retrieving broker ID", e);
 		}
 		return getResultsetHelper().extractInt(res);
 	}
@@ -61,7 +61,7 @@ public class BrokerDao extends Dao implements IBrokerDao {
 
 	@Override
 	public List<String> getBrokerNames() {
-		String query = getQuery("provider.broker.select_all_names");
+		String query = getFilledQuery("provider.broker.select_all_names");
 		ResultSet res = null;
 		try {
 			res = statement.executeQuery(query);
@@ -79,7 +79,7 @@ public class BrokerDao extends Dao implements IBrokerDao {
 
 	@Override
 	public List<BrokerPojo> getBrokers() {
-		String query = getQuery("provider.broker.select_all");
+		String query = getFilledQuery("provider.broker.select_all");
 		ResultSet res = null;
 		try {
 			res = statement.executeQuery(query);
@@ -96,8 +96,8 @@ public class BrokerDao extends Dao implements IBrokerDao {
 	}
 
 	@Override
-	public boolean saveBroker(BrokerPojo broker) {
-		String query = getQuery("provider.broker.upsert_one", broker.getName(), broker.getName());
+	public boolean save(BrokerPojo broker) {
+		String query = getFilledQuery("provider.broker.upsert_one", broker.getName(), broker.getName());
 		int brokerId = -1;
 		Statement statement = null;
 		try {

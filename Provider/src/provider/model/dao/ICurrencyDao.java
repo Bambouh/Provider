@@ -11,18 +11,18 @@ public interface ICurrencyDao {
 	Integer getCurrencyId(String cur1, String cur2);
 	
 	CurrencyPojo getCurrency(int currencyId);
-	
-	List<Integer> getCurrencieIds();
-	
+		
 	List<String> getCurrencyPairs();
 	
-	Map<String, Integer> getCurrencyIdPerName();
+	Map<String, Integer> getCurrencyIdPerPair();
+	
+	Map<Integer, String> getCurrencyPairPerId();
 	
 	List<CurrencyPojo> getCurrencies();
 	
-	List<CurrencyPojo> getCurrencies(int providerId);
+	List<CurrencyPojo> getCurrenciesPerProvider(int providerId);
 	
-	List<CurrencyPojo> getCurrencies(ProviderPojo provider);
+	List<CurrencyPojo> getCurrenciesPerProvider(ProviderPojo provider);
 	
 	boolean saveCurrency(CurrencyPojo currency);
 		
